@@ -3,12 +3,16 @@ display stirDisplay, heatingDisplay, phDisplay;
 circularDisplay stirCirle, heatingCirle, phCirle;
 display currentPointer;   //the current display mouse cursor is on
 
-int widthDivide, heightDivide;  //divide h & w into parts, for putting the componets
+int widthDivide, heightDivide;  //divide h & w into parts, for putting the components
 int lastMouseX = mouseX;
 int lastMouseY = mouseY;
 
 int graphWidth;
 int[] stirGraph;  //store history values to plot the graph
+
+//global variable? more copy & paste programming :D
+int stirRealValue = 700;
+int stirSetValue = 700;
 
 void setup() {
   size(730, 900);
@@ -52,7 +56,7 @@ void draw() {
   }
   
   
-  //----------------------setting stir display status (with in the acceptabl range or not) ---------------------- 
+  //----------------------setting stir display status (with in the acceptable range or not) ---------------------- 
 
   if(abs(stirRealValue - stirSetValue)> 20){
     if(stirRealValue > stirSetValue){

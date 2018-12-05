@@ -12,6 +12,3 @@ color accentRed = color(244, 66, 66);
 color accentBlue = color(0, 225, 255);
 color accentOrange = color(255, 148, 0);
 color darkGrey = color(50);
-
-int stirRealValue = 700;
-int stirSetValue = 700;
