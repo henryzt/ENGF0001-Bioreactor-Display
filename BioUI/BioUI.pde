@@ -1,4 +1,3 @@
-
 display stirDisplay, heatingDisplay, phDisplay;
 circularDisplay stirCirle, heatingCirle, phCirle;
 display currentPointer;   //the current display mouse cursor is on
@@ -8,14 +7,19 @@ int lastMouseX = mouseX;
 int lastMouseY = mouseY;
 
 int graphWidth;
-int[] stirGraph;  //store history values to plot the graph
+float[] stirGraph;  //store history values to plot the graph
+float[] heatingGraph;
+float[] phGraph;
 
-//global variable? more copy & paste programming :D
-int stirRealValue = 700;
-int stirSetValue = 700;
+float stirRealValue = 0; //0 for not connected
+float stirSetValue = 700;
+float phRealValue = 0;
+float phSetValue = 5;
+float heatingRealValue = 0;
+float heatingSetValue = 25;
 
 void setup() {
-  size(730, 900);
+  size(900, 900);
   widthDivide = width / 10;
   heightDivide = 460 / 7;
   noStroke();
@@ -32,7 +36,9 @@ void setup() {
 
   //for graphs below the display
   graphWidth = width;
-  stirGraph= new int[width];
+  stirGraph= new float[width];
+  phGraph= new float[width];
+  heatingGraph= new float[width];
   
   ellipseMode(CENTER);
   setTimer(); //for test, delete later
@@ -46,56 +52,91 @@ void draw() {
   if(showGraph){
     for(int i = 1; i < graphWidth; i++) { 
       stirGraph[i-1] = stirGraph[i]; 
+      phGraph[i-1] = phGraph[i]; 
+      heatingGraph[i-1] = heatingGraph[i]; 
     } 
     // Add the new values to the end of the array 
     stirGraph[graphWidth-1] = stirRealValue; 
+    phGraph[graphWidth-1] =  phRealValue; 
+    heatingGraph[graphWidth-1] =  heatingRealValue; 
     
     stirDisplay.updateGraph(stirGraph,1500, accentGreen);
-    phDisplay.updateGraph(stirGraph,1500, accentOrange);
-    heatingDisplay.updateGraph(stirGraph,1500, accentBlue);  
+    phDisplay.updateGraph(phGraph,7, accentOrange);
+    heatingDisplay.updateGraph(heatingGraph,35, accentBlue);  
   }
   
   
   //----------------------setting stir display status (with in the acceptable range or not) ---------------------- 
 
-  if(abs(stirRealValue - stirSetValue)> 20){
-    if(stirRealValue > stirSetValue){
-      stirDisplay.setStatus("Decreasing...", accentRed,accentRed);
-    }else{
-      stirDisplay.setStatus("Increasing...", accentRed,accentRed);
-    }
-  }else{
-    stirDisplay.setStatus("Updating...", accentGreen,accent);
-  }
-  //TODO: CHANGE THIS TO GENERAL FUNCTION LATER
-  
-  heatingDisplay.setStatus("Not Connected", secondary,darkGrey);
-  phDisplay.setStatus("Not Connected", secondary,darkGrey);
+  checkRangeAndUpdate(stirDisplay);
+  checkRangeAndUpdate(phDisplay);
+  checkRangeAndUpdate(heatingDisplay);
+
   
  
-  //----------------------update displays---------------------- (TODO: USE REAL VALUES)
+  //----------------------update displays---------------------- 
   stirDisplay.update(stirRealValue, stirSetValue);
-  heatingDisplay.update(24,27);
-  phDisplay.update(4,5);
+  heatingDisplay.update(heatingRealValue, heatingSetValue);
+  phDisplay.update(phRealValue, phSetValue);
   
 
   
   
-  //----------------------update circular displays---------------------- (TODO: USE REAL VALUES)
+  //----------------------update circular displays---------------------- 
   stirCirle.update(stirRealValue,stirSetValue, 1500, false);
-  heatingCirle.update(27,30,35,false);
-  phCirle.update(4,5,7,false);
+  heatingCirle.update(heatingRealValue,heatingSetValue,35,false);
+  phCirle.update(phRealValue,phSetValue,7,false);
+
+}
+
+//===============check range and update display status===============
+void checkRangeAndUpdate(display display){
+  float realValue = -1, setValue = -1, diff = 0;
+   if(display == stirDisplay){
+     realValue = stirRealValue;
+     setValue = stirSetValue;
+     diff = 20;
+   }
+   if(display == heatingDisplay){
+     realValue = heatingRealValue;
+     setValue = heatingSetValue;
+     diff = 0.5;
+   }  
+   if(display == phDisplay){
+     realValue = phRealValue;
+     setValue = phSetValue;
+     diff = 0;
+   }
+   
+  if(realValue == 0){
+      display.setStatus("Not Connected", secondary,darkGrey);
+      return;
+  }
+   
+  if(abs(realValue - setValue)> diff){
+      if(realValue > setValue){
+        display.setStatus("Decreasing...", accentRed,accentRed);
+      }else{
+        display.setStatus("Increasing...", accentRed,accentRed);
+      }
+    }else{
+      display.setStatus("Updating...", accentGreen,accent);
+    }
+
 
 }
 
 //===============mouse press function for buttons in the display===============
 void mousePressed() {
-  if (stirDisplay.bPlus.over) {
-    changeSetValue(stirDisplay, stirSetValue +10);
- 
-  }
-  if (stirDisplay.bMinus.over) {
-    changeSetValue(stirDisplay, stirSetValue -10);
+  updateCurrentDisplayPointer();
+  if(currentPointer != null){
+    if (currentPointer.bPlus.over) {
+      stepChangeSetValue(currentPointer,true,true);
+   
+    }
+    if (currentPointer.bMinus.over) {
+      stepChangeSetValue(currentPointer,false,true);
+    }
   }
 }
 
@@ -119,9 +160,9 @@ void mouseDragged() {
   
 }
 
+//=============== setting the current display mouse is over ===============
+void updateCurrentDisplayPointer(){
 
-void keyPressed(){
-  //---------setting the current display mouse is over------
   if(stirDisplay.over){
     currentPointer = stirDisplay;
   }else if(phDisplay.over){
@@ -129,6 +170,13 @@ void keyPressed(){
   }else if(heatingDisplay.over){
     currentPointer = heatingDisplay;
   }
+}
+
+
+
+void keyPressed(){
+  
+  updateCurrentDisplayPointer();
   
   //---------global key functions------
   if(key == 'a'){
@@ -149,28 +197,24 @@ void keyPressed(){
       currentPointer.deleteText();
     }
     if(keyCode == UP){
-       changeSetValue(currentPointer, stirSetValue + 1);
+       stepChangeSetValue(currentPointer,true,false);
     }
     if(keyCode == DOWN){
-       changeSetValue(currentPointer, stirSetValue - 1);
-    }
-    if(keyCode == LEFT){
-       changeSetValue(currentPointer, stirSetValue - 10);
+       stepChangeSetValue(currentPointer,false,false);
     }
     if(keyCode == RIGHT){
-       changeSetValue(currentPointer, stirSetValue + 10);
+       stepChangeSetValue(currentPointer,true,true);
+    }
+    if(keyCode == LEFT){
+       stepChangeSetValue(currentPointer,false,true);
     }
     
     if(keyCode == ENTER){
       String newText = currentPointer.confirmText();
       if(!newText.equals("")){
         float newValue = parseFloat(newText);
-        
-        if( currentPointer == stirDisplay){
-             changeSetValue(stirDisplay, newValue);
-        }
-          
-          
+        changeSetValue(currentPointer, newValue);
+
       }
     }  //ENTER for confirming editing
       
@@ -178,7 +222,47 @@ void keyPressed(){
   
 
 }
+
+
+//=============== step change set value (add or sub a certain value) ==================
+void stepChangeSetValue(display display, boolean addition, boolean big){
+  float stirStepBig = 10, phStepBig = 0.5, heatingStepBig = 1;
+  float stirStepSmall = 1, phStepSmall = 0.1, heatingStepSmall = 0.5;
+  float finalChange = 0;
+  float valueBeforeChange = 0;
+  if(display == stirDisplay){
+    valueBeforeChange = stirSetValue;
+    if(big){
+      finalChange = stirStepBig;
+    }else{
+      finalChange = stirStepSmall;
+    }
+  } 
+  if(display == phDisplay){
+    valueBeforeChange = phSetValue;
+    if(big){
+      finalChange = phStepBig;
+    }else{
+      finalChange = phStepSmall;
+    }
+  }
+  if(display == heatingDisplay){
+    valueBeforeChange = heatingSetValue;
+    if(big){
+      finalChange = heatingStepBig;
+    }else{
+      finalChange = heatingStepSmall;
+    }
+  }
   
+  if(!addition){
+    finalChange = - finalChange;
+  }
+  
+  changeSetValue(display, valueBeforeChange + finalChange);
+  
+}
+
 
 
 //===============funtion to check the set value and set it if it is within the correct range===============
@@ -186,7 +270,19 @@ void changeSetValue(display display, float value){
   
   if(display == stirDisplay){
     if(value <= 1500 && value >= 500){
-      stirSetValue = (int) value;
+      stirSetValue = value;
+    }
+  }
+  
+  if(display == phDisplay){
+    if(value <= 7 && value >= 3){
+      phSetValue = value;
+    }
+  }
+  
+  if(display == heatingDisplay){
+    if(value <= 35 && value >= 25){
+      heatingSetValue = value;
     }
   }
   
@@ -199,7 +295,7 @@ void changeSetValue(display display, float value){
 //===============for testing, delete later===============
 void setTimer(){ 
   
-  //ref:https://stackoverflow.com/questions/17397259/how-to-do-an-action-in-periodic-intervals-in-java
+   //ref:https://stackoverflow.com/questions/17397259/how-to-do-an-action-in-periodic-intervals-in-java
    
    java.util.Timer scoreTimer = new java.util.Timer();
         scoreTimer.schedule(new TimerTask() {
@@ -207,6 +303,8 @@ void setTimer(){
             @Override
             public void run() {
                 stirRealValue = (int) random(stirSetValue - 30,stirSetValue +30);
+                heatingRealValue = random(heatingSetValue - 1,heatingSetValue + 1);
+                phRealValue = random(phSetValue - 1,phSetValue + 1);
             }
       }, 100, 1000);
         
