@@ -1,3 +1,9 @@
+import processing.serial.*;
+import java.nio.ByteOrder;
+import java.nio.ByteBuffer;
+
+Serial arduinoPort;  // Create object from Serial class
+
 display stirDisplay, heatingDisplay, phDisplay;
 circularDisplay stirCirle, heatingCirle, phCirle;
 display currentPointer;   //the current display mouse cursor is on
@@ -16,13 +22,15 @@ float stirSetValue = 700;
 float phRealValue = 0;
 float phSetValue = 5;
 float heatingRealValue = 0;
-float heatingSetValue = 25;
+float heatingSetValue = 25.0;
 
 void setup() {
   size(900, 900);
   widthDivide = width / 10;
   heightDivide = 460 / 7;
   noStroke();
+ 
+  connectToSerial();
   
   //declare displays (control for each module, 3 in total)
   stirDisplay = new display(widthDivide, heightDivide * 5.2, "Stirring Speed Control", "RPM");
@@ -43,10 +51,13 @@ void setup() {
   ellipseMode(CENTER);
   setTimer(); //for test, delete later
   
+  
+  
 }
 
 void draw() {
   background(0);
+  serialCall();
   
   //----------------------draw graphs----------------------
   if(showGraph){
@@ -302,9 +313,9 @@ void setTimer(){
 
             @Override
             public void run() {
-                stirRealValue = (int) random(stirSetValue - 30,stirSetValue +30);
-                heatingRealValue = random(heatingSetValue - 1,heatingSetValue + 1);
-                phRealValue = random(phSetValue - 1,phSetValue + 1);
+                //stirRealValue = (int) random(stirSetValue - 30,stirSetValue +30);
+                //heatingRealValue = random(heatingSetValue - 1,heatingSetValue + 1);
+                //phRealValue = random(phSetValue - 1,phSetValue + 1);
             }
       }, 100, 1000);
         
