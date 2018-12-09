@@ -49,10 +49,7 @@ void setup() {
   heatingGraph= new float[width];
   
   ellipseMode(CENTER);
-  setTimer(); //for test, delete later
-  
-  
-  
+  //setTimer(); //for test, delete later
 }
 
 void draw() {
