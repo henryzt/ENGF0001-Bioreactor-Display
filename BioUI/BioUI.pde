@@ -154,21 +154,26 @@ void mousePressed() {
 
 //===============mouse drag function on the circular display===============
 void mouseDragged() {
+  
+    updateCircularDisplay(stirDisplay, stirCirle, stirRealValue, stirSetValue, 1500);
+    updateCircularDisplay(heatingDisplay, heatingCirle, heatingRealValue, heatingSetValue, 35);
+    updateCircularDisplay(phDisplay, phCirle, phRealValue, phSetValue, 7);
+  
+}
 
-  if (stirCirle.over){
-      if(mouseY > lastMouseY){
-        changeSetValue(stirDisplay, stirSetValue - 10);
+void updateCircularDisplay(display mainDisplay, circularDisplay circular, float realValue, float setValue, float max){
+  if (circular.over){
+    if(mouseY > lastMouseY){
+        stepChangeSetValue(mainDisplay,false,true);
       }
       if(mouseY < lastMouseY){
-        changeSetValue(stirDisplay, stirSetValue + 10);
+        stepChangeSetValue(mainDisplay,true,true);
       }
-      
-    
-    lastMouseY = mouseY;
-    stirCirle.setDelay = 50;
-    stirCirle.update(stirRealValue,stirSetValue, 1500, true);
-  }
   
+      lastMouseY = mouseY;
+      circular.setDelay = 50;
+      circular.update(realValue,setValue, max, true);
+  }
 }
 
 //=============== setting the current display mouse is over ===============
@@ -313,9 +318,9 @@ void setTimer(){
 
             @Override
             public void run() {
-                //stirRealValue = (int) random(stirSetValue - 30,stirSetValue +30);
-                //heatingRealValue = random(heatingSetValue - 1,heatingSetValue + 1);
-                //phRealValue = random(phSetValue - 1,phSetValue + 1);
+                stirRealValue = (int) random(stirSetValue - 30,stirSetValue +30);
+                heatingRealValue = random(heatingSetValue - 1,heatingSetValue + 1);
+                phRealValue = random(phSetValue - 1,phSetValue + 1);
             }
       }, 100, 1000);
         
