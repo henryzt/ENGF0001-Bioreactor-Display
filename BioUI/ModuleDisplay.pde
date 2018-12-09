@@ -199,30 +199,36 @@ class display {
     return "";
   }
 
-  void updateGraph(float[] list, int max, color colour) {
+  void updateGraph(float[] list, float setValue, int max, color colour) {
     float heightDiv = h/max;
+    float startY = y - 31 + h;
 
 
-
+    
     for (int i=1; i<graphWidth; i++) {
       //point(i,  y - 31 + h -(heightDiv * list[i]));
-      float y1 = y - 31 + h -(heightDiv * list[i-1]);
-      float y2 = y - 31 + h -(heightDiv * list[i]);
+      
+      float y1 = startY -(heightDiv * list[i-1]);
+      float y2 = startY -(heightDiv * list[i]);
 
       fill(colour, 30);
       rect(i-1, y1, 1, y+h-30-y1);
       strokeWeight(3);
 
-      //if(statusColor == accentRed){
-      //   stroke(accentRed,30);
-      //}else{
       stroke(colour, 30);
-      //}
-
       line(i-1, y1, i, y2 );
-
+      
+      
+      if(i % 20 ==0){
+        strokeWeight(1);
+        stroke(255, 50);
+        line(i, startY - heightDiv * setValue, i + 5, startY - heightDiv * setValue ); // set value baseline 
+      }
+      
+      
       noStroke();
     }
+    
   }
 }
 

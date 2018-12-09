@@ -71,9 +71,9 @@ void draw() {
     phGraph[graphWidth-1] =  phRealValue; 
     heatingGraph[graphWidth-1] =  heatingRealValue; 
     
-    stirDisplay.updateGraph(stirGraph,1500, accentGreen);
-    phDisplay.updateGraph(phGraph,7, accentOrange);
-    heatingDisplay.updateGraph(heatingGraph,35, accentBlue);  
+    stirDisplay.updateGraph(stirGraph, stirSetValue, 1500, accentGreen);
+    phDisplay.updateGraph(phGraph, phSetValue, 7, accentOrange);
+    heatingDisplay.updateGraph(heatingGraph, heatingSetValue, 35, accentBlue);  
   }
   
   
