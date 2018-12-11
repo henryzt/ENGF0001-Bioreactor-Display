@@ -203,8 +203,6 @@ class display {
     float heightDiv = h/max;
     float startY = y - 31 + h;
 
-
-    
     for (int i=1; i<graphWidth; i++) {
       //point(i,  y - 31 + h -(heightDiv * list[i]));
       
@@ -219,9 +217,9 @@ class display {
       line(i-1, y1, i, y2 );
       
       
-      if(i % 20 ==0){
+      if(i % 20 == 0 && baseline){
         strokeWeight(1);
-        stroke(255, 50);
+        stroke(colour, 80);
         line(i, startY - heightDiv * setValue, i + 5, startY - heightDiv * setValue ); // set value baseline 
       }
       

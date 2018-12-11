@@ -1,5 +1,7 @@
 byte value;
 
+
+
 void connectToSerial() {
 
   String portName = "";
@@ -22,7 +24,7 @@ void connectToSerial() {
 }
 
 
-final int REQUEST_INTERVAL_MS = 500;
+final int REQUEST_INTERVAL_MS = 200;
 final int RESPONSE_MAX_TIME_MS = 50;
 
 int currentTimeMs = 0;
@@ -43,13 +45,13 @@ byte responseHeader = 0x00;
 byte responseBuffer[] = new byte[5];
 byte responsePayload[] = new byte[4];
 
+byte[] nextRequest;
+
 void serialCall() {
 
   currentTimeMs = millis();
   if (currentTimeMs - previousTimeMs > REQUEST_INTERVAL_MS) {
-    arduinoPort.write(getPhRequest);
-    arduinoPort.write(getRpmRequest);
-    arduinoPort.write(getTemperatureRequest);
+    sendRequest();
     serialSend();
     requestSentTimeMs = millis();
     previousTimeMs = millis();
@@ -98,8 +100,32 @@ void serialCall() {
       
       println(f);
     }
+  }else{
+    println("no buffer");
+    heatingRealValue = 0;
+    stirRealValue = 0;
+    phRealValue = 0;
   }
 }
+
+void sendRequest(){
+ 
+    if(nextRequest == getPhRequest){
+      nextRequest = getRpmRequest;
+      println("rpm next ");
+    }else if(nextRequest == getRpmRequest){
+      nextRequest = getTemperatureRequest;
+      println("temp next ");
+    }else{
+      nextRequest = getPhRequest;
+      println("ph next ");
+    }
+    arduinoPort.write(nextRequest);
+    //arduinoPort.write(getRpmRequest);
+    //arduinoPort.write(getTemperatureRequest);
+  
+}
+
 
 void serialSend() {
   arduinoPort.write(getRequestBuffer((byte) 0x04, heatingSetValue));

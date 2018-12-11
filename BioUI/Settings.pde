@@ -2,6 +2,7 @@ import java.util.TimerTask;     //For testing, delete later
 
 boolean showGraph = true;      //turn graph below display on or off, triggered by press key 'g'
 boolean animation = true;      //turn circular display animation on or off, triggered by press key 'a'
+boolean baseline = false; 
 
 color accent = color(255, 229, 0);
 color buttonOver = color(255);

@@ -49,12 +49,12 @@ void setup() {
   heatingGraph= new float[width];
   
   ellipseMode(CENTER);
-  //setTimer(); //for test, delete later
+  setTimer(); //for test, delete later
 }
 
 void draw() {
   background(0);
-  serialCall();
+  //serialCall();
   
   //----------------------draw graphs----------------------
   if(showGraph){
