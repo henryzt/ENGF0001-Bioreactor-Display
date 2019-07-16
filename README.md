@@ -6,11 +6,13 @@ This is the client control panel displayed on the PC, connected to the Arduino b
 
 # User Interface
 The user interface aims to provide an easy and intuitive way for the user to monitor the subsystems and adjust the setpoints to optimize the growth conditions for the Bioreactor. The user interface must fulfil the following requirements:
-• Intuitive
-• Ability to observe real-time data from the subsystems
-• Ability to change setpoints for each subsystem
-• Validate user input for the setpoints to be within valid ranges
-• Ability to communicate with the Arduino firmware
+
+- Intuitive
+- Ability to observe real-time data from the subsystems
+- Ability to change setpoints for each subsystem
+- Validate user input for the setpoints to be within valid ranges
+- Ability to communicate with the Arduino firmware
+
 The User Interface (“UI”) was developed with Processing.
 
 ![Screenshot](img/screenshot.png)
